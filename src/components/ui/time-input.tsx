@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +17,6 @@ export function TimeInput({ value, onChange, placeholder = "Zeit auswählen", cl
   const [minutes, setMinutes] = React.useState("00");
   const hoursRef = React.useRef<HTMLDivElement | null>(null);
 
-  // Parse the time value when it changes
   React.useEffect(() => {
     if (value) {
       const [h, m] = value.split(':');
@@ -31,7 +29,6 @@ export function TimeInput({ value, onChange, placeholder = "Zeit auswählen", cl
 
   React.useEffect(() => {
     if (open && hoursRef.current) {
-      // focus the scrollable hours container so wheel/keyboard scroll works immediately
       hoursRef.current.focus();
     }
   }, [open]);
@@ -42,12 +39,10 @@ export function TimeInput({ value, onChange, placeholder = "Zeit auswählen", cl
     setOpen(false);
   };
 
-  // Generate hour options (00-23)
   const hourOptions = Array.from({ length: 24 }, (_, i) => 
     String(i).padStart(2, '0')
   );
 
-  // Generate minute options (00, 15, 30, 45)
   const minuteOptions = ['00', '15', '30', '45'];
 
   const displayValue = value || placeholder;
@@ -70,7 +65,6 @@ export function TimeInput({ value, onChange, placeholder = "Zeit auswählen", cl
       <PopoverContent
         className="w-auto p-4"
         align="start"
-        // Ensure touch gestures inside the popover are handled by its children
         onTouchStart={(e) => e.stopPropagation()}
         onTouchMove={(e) => e.stopPropagation()}
         style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
@@ -79,14 +73,11 @@ export function TimeInput({ value, onChange, placeholder = "Zeit auswählen", cl
           <div className="text-sm font-medium">Zeit auswählen</div>
           
           <div className="grid grid-cols-2 gap-4">
-            {/* Hours */}
             <div>
               <label className="text-xs font-medium text-gray-500 mb-2 block">Stunden</label>
               <div
                 className="grid grid-cols-3 gap-1 h-32 overflow-y-auto"
-                // Prevent parent listeners from hijacking scroll (useful inside dialogs/popovers)
                 onWheel={(e) => e.stopPropagation()}
-                // Ensure touch scrolling works on mobile and doesn't propagate to parent
                 onTouchStart={(e) => e.stopPropagation()}
                 onTouchMove={(e) => e.stopPropagation()}
                 onPointerDown={(e) => e.stopPropagation()}
@@ -108,7 +99,6 @@ export function TimeInput({ value, onChange, placeholder = "Zeit auswählen", cl
               </div>
             </div>
 
-            {/* Minutes */}
             <div>
               <label className="text-xs font-medium text-gray-500 mb-2 block">Minuten</label>
               <div
@@ -135,7 +125,6 @@ export function TimeInput({ value, onChange, placeholder = "Zeit auswählen", cl
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-2 pt-2">
             <Button
               onClick={() => handleTimeChange(hours, minutes)}

@@ -11,13 +11,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Eye, EyeOff, User, Lock } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
-// Hardcoded credentials
-const VALID_CREDENTIALS = {
-  username: 'admin',
-  password: 'password123'
-};
+import { validateCredentials } from '@/lib/users';
 
-// Zod schema for form validation (Deutsch)
 const loginSchema = z.object({
   username: z.string().min(1, 'Benutzername ist erforderlich'),
   password: z.string().min(1, 'Passwort ist erforderlich'),
@@ -45,14 +40,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     resolver: zodResolver(loginSchema),
   });
 
-  // Check if user is already logged in on component mount
   useEffect(() => {
     if (isAuthenticated) {
-      // User is already logged in, redirect or call onLogin
       if (onLogin) {
         onLogin();
       } else {
-        navigate('/dashboard'); // Navigate to dashboard or main page
+        navigate('/dashboard');
       }
     }
   }, [isAuthenticated, navigate, onLogin]);
@@ -61,25 +54,16 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     setIsLoading(true);
     setLoginError('');
 
-    // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Check credentials
-    if (
-      data.username === VALID_CREDENTIALS.username &&
-      data.password === VALID_CREDENTIALS.password
-    ) {
-      // Use auth context to login
-      login(data.username);
+    if (validateCredentials(data.username, data.password)) {
+      login(data.username, data.password);
       
-      // Clear form
       reset();
       
-      // Call onLogin callback if provided
       if (onLogin) {
         onLogin();
       } else {
-        // Navigate to dashboard or main page
         navigate('/dashboard');
       }
     } else {
@@ -143,10 +127,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-3 h-4 w-4 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 flex items-center justify-center text-gray-400 hover:text-gray-600"
                     onClick={togglePasswordVisibility}
+                    aria-label={showPassword ? 'Passwort verbergen' : 'Passwort anzeigen'}
                   >
-                    {showPassword ? <EyeOff /> : <Eye />}
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
                 {errors.password && (
@@ -162,18 +147,6 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 {isLoading ? 'Anmelden...' : 'Anmelden'}
               </Button>
             </form>
-
-            <div className="mt-6 p-4 bg-gray-50 rounded-md">
-              <p className="text-sm text-gray-600 text-center">
-                <strong>Demo-Zugangsdaten:</strong>
-              </p>
-              <p className="text-xs text-gray-500 text-center mt-1">
-                Benutzername: <code className="bg-white px-1 rounded">admin</code>
-              </p>
-              <p className="text-xs text-gray-500 text-center">
-                Passwort: <code className="bg-white px-1 rounded">password123</code>
-              </p>
-            </div>
           </CardContent>
         </Card>
       </div>
@@ -183,23 +156,19 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
 export default Login;
 
-// Utility function to check if user is logged in
 export const isUserLoggedIn = (): boolean => {
   return localStorage.getItem('loggedInUser') !== null;
 };
 
-// Utility function to get logged in user
 export const getLoggedInUser = (): string | null => {
   return localStorage.getItem('loggedInUser');
 };
 
-// Utility function to logout user
 export const logoutUser = (): void => {
   localStorage.removeItem('loggedInUser');
   localStorage.removeItem('loginTimestamp');
 };
 
-// Utility function to get login timestamp
 export const getLoginTimestamp = (): string | null => {
   return localStorage.getItem('loginTimestamp');
 };

@@ -88,15 +88,10 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ onSuccess, onClos
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedType, setSelectedType] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // Watch form fields for validation
   const watchTitle = watch("title");
   const watchRepeatType = watch("repeatType");
   const watchRepeatCount = watch("repeatCount");
-  
   const showRepeatCount = watchRepeatType && watchRepeatType !== "none";
-
-  // Dialog state
   const [alertDialog, setAlertDialog] = useState<{
     open: boolean;
     title: string;
@@ -109,7 +104,6 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ onSuccess, onClos
     variant: 'info'
   });
 
-  // Helper function to format date without timezone issues
   const formatDateForAPI = (date: Date): string => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -117,7 +111,6 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ onSuccess, onClos
     return `${year}-${month}-${day}`;
   };
 
-  // Helper function for showing alerts
   const showAlert = (title: string, description: string, variant: 'success' | 'error' | 'info' = 'info') => {
     setAlertDialog({
       open: true,
@@ -127,7 +120,6 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ onSuccess, onClos
     });
   };
 
-  // Form validation
   const isFormValid = () => {
     const hasTitle = watchTitle && watchTitle.trim().length > 0;
     const hasDate = selectedDate !== undefined;
@@ -136,7 +128,6 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ onSuccess, onClos
     return hasTitle && hasDate && hasValidRepeatCount;
   };
 
-  // Reset form completely
   const resetForm = () => {
     reset({
       repeatType: "none"
@@ -191,7 +182,6 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ onSuccess, onClos
     setIsSubmitting(true);
     
     try {
-      // Use the selected date from DatePicker or fall back to form data
       const eventDate = selectedDate ? formatDateForAPI(selectedDate) : data.date;
       
       if (!eventDate) {
@@ -199,7 +189,6 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ onSuccess, onClos
         return;
       }
 
-      // Generate multiple events if repeat is set
       const eventsToCreate = [];
       const baseEvent = {
         title: data.title,
@@ -211,10 +200,8 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ onSuccess, onClos
       };
 
       if (!data.repeatType || data.repeatType === "none") {
-        // Single event
         eventsToCreate.push(baseEvent);
       } else {
-        // Multiple events based on repeat type
         const repeatCount = data.repeatCount || 1;
         const startDate = new Date(eventDate);
         
@@ -233,7 +220,6 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ onSuccess, onClos
               break;
             case "monthly_date":
               eventDate.setMonth(startDate.getMonth() + i);
-              // Keep the same day of month
               break;
             case "yearly":
               eventDate.setFullYear(startDate.getFullYear() + i);
@@ -242,12 +228,11 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ onSuccess, onClos
           
           eventsToCreate.push({
             ...baseEvent,
-            date: formatDateForAPI(eventDate) // Format as YYYY-MM-DD
+            date: formatDateForAPI(eventDate)
           });
         }
       }
 
-      // Create all events
       for (const event of eventsToCreate) {
         const res = await fetch(`${API}?action=create`, {
           method: 'POST',
@@ -263,13 +248,10 @@ const CreateEventDialog: React.FC<CreateEventDialogProps> = ({ onSuccess, onClos
       
       showAlert('Erfolg', `${eventsToCreate.length} Ereignis(se) erfolgreich erstellt`, 'success');
       
-      // Reset form and close dialog
       resetForm();
       
-      // Call success callback and close dialog after a short delay
       if (onSuccess) onSuccess();
       
-      // Auto close dialog after success
       setTimeout(() => {
         if (onClose) onClose();
       }, 1500);

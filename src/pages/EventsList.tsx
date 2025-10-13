@@ -42,7 +42,6 @@ const EventsList: React.FC = () => {
   const [currentFilter, setCurrentFilter] = useState<FilterType>('future');
   const [filterOpen, setFilterOpen] = useState(false);
   
-  // Dialog states
   const [alertDialog, setAlertDialog] = useState<{
     open: boolean;
     title: string;
@@ -67,7 +66,6 @@ const EventsList: React.FC = () => {
     onConfirm: () => {}
   });
 
-  // Helper functions for dialogs
   const showAlert = (title: string, description: string, variant: 'success' | 'error' | 'info' = 'info') => {
     setAlertDialog({
       open: true,
@@ -86,7 +84,6 @@ const EventsList: React.FC = () => {
     });
   };
 
-  // Filter events based on current filter
   const filterEvents = (eventsToFilter: Event[], filter: FilterType) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -129,7 +126,6 @@ const EventsList: React.FC = () => {
     loadEvents();
   }, []);
 
-  // Update filtered events when events or filter changes
   useEffect(() => {
     setFilteredEvents(filterEvents(events, currentFilter));
   }, [events, currentFilter]);
@@ -302,7 +298,6 @@ const EventsList: React.FC = () => {
                 <Card key={event.id} className={`${getEventTypeColor(event.type)} transition-all hover:shadow-md`}>
                   <CardContent className="p-4 sm:p-6">
                     {editingId === event.id ? (
-                      // Edit Mode
                       <div className="space-y-4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <Input
@@ -344,7 +339,6 @@ const EventsList: React.FC = () => {
                         </div>
                       </div>
                     ) : (
-                      // View Mode
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                         <div className="flex-1">
                           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2">

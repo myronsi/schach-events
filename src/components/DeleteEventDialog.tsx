@@ -55,7 +55,6 @@ const DeleteEventDialog: React.FC<DeleteEventDialogProps> = ({ onSuccess, onClos
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // Helper function to format date without timezone issues
   const formatDateForAPI = (date: Date): string => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -63,7 +62,6 @@ const DeleteEventDialog: React.FC<DeleteEventDialogProps> = ({ onSuccess, onClos
     return `${year}-${month}-${day}`;
   };
   
-  // Dialog states
   const [alertDialog, setAlertDialog] = useState<{
     open: boolean;
     title: string;
@@ -92,7 +90,6 @@ const DeleteEventDialog: React.FC<DeleteEventDialogProps> = ({ onSuccess, onClos
   const needsTitle = watchDeleteMode === "upcomingTitle";
   const needsDate = watchDeleteMode === "allOnDay";
 
-  // Helper functions for dialogs
   const showAlert = (title: string, description: string, variant: 'success' | 'error' | 'info' = 'info') => {
     setAlertDialog({
       open: true,
@@ -143,7 +140,6 @@ const DeleteEventDialog: React.FC<DeleteEventDialogProps> = ({ onSuccess, onClos
     setValue('deleteMode', mode);
     setSelectedMode(mode);
     setModeOpen(false);
-    // Reset other fields when mode changes
     setSelectedTitle("");
     setSelectedDate(undefined);
     setValue('title', "");
@@ -151,7 +147,6 @@ const DeleteEventDialog: React.FC<DeleteEventDialogProps> = ({ onSuccess, onClos
   };
 
   const onSubmit = async (data: FormData) => {
-    // Ensure we have the latest date value
     const dateValue = selectedDate ? formatDateForAPI(selectedDate) : data.date;
     const formData = {
       ...data,
@@ -194,10 +189,8 @@ const DeleteEventDialog: React.FC<DeleteEventDialogProps> = ({ onSuccess, onClos
             setStatus('success');
             showAlert('Erfolg', `${result.deleted} Ereignis(se) erfolgreich gelöscht`, 'success');
             
-            // Call success callback and close dialog after a short delay
             if (onSuccess) onSuccess();
             
-            // Auto close dialog after success
             setTimeout(() => {
               if (onClose) onClose();
             }, 1500);
@@ -218,7 +211,6 @@ const DeleteEventDialog: React.FC<DeleteEventDialogProps> = ({ onSuccess, onClos
     );
   };
 
-  // Get unique titles
   const uniqueTitles = [...new Set(events.map(event => event.title))];
 
   return (
@@ -347,7 +339,6 @@ const DeleteEventDialog: React.FC<DeleteEventDialogProps> = ({ onSuccess, onClos
         </div>
       )}
       
-      {/* Dialog Components */}
       <AlertMessage
         open={alertDialog.open}
         onOpenChange={(open) => setAlertDialog(prev => ({ ...prev, open }))}

@@ -47,7 +47,6 @@ const EventsListEmbedded = forwardRef<EventsListRef>((_props, ref) => {
   const [currentFilter, setCurrentFilter] = useState<FilterType>('future');
   const [filterOpen, setFilterOpen] = useState(false);
   
-  // Dialog states
   const [alertDialog, setAlertDialog] = useState<{
     open: boolean;
     title: string;
@@ -72,7 +71,6 @@ const EventsListEmbedded = forwardRef<EventsListRef>((_props, ref) => {
     onConfirm: () => {}
   });
 
-  // Helper functions for dialogs
   const showAlert = (title: string, description: string, variant: 'success' | 'error' | 'info' = 'info') => {
     setAlertDialog({
       open: true,
@@ -91,10 +89,8 @@ const EventsListEmbedded = forwardRef<EventsListRef>((_props, ref) => {
     });
   };
 
-  // Filter events based on current filter
   const filterEvents = (eventsToFilter: Event[], filter: FilterType) => {
     const today = new Date();
-    // Use local timezone instead of UTC to avoid timezone shift issues
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
@@ -137,7 +133,6 @@ const EventsListEmbedded = forwardRef<EventsListRef>((_props, ref) => {
     loadEvents();
   }, []);
 
-  // Update filtered events when events or filter changes
   useEffect(() => {
     setFilteredEvents(filterEvents(events, currentFilter));
   }, [events, currentFilter]);
@@ -152,7 +147,6 @@ const EventsListEmbedded = forwardRef<EventsListRef>((_props, ref) => {
     setOriginalEvent(event);
   };
 
-  // Check if form has changes
   const hasChanges = () => {
     if (!originalEvent) return false;
     
@@ -166,7 +160,6 @@ const EventsListEmbedded = forwardRef<EventsListRef>((_props, ref) => {
     );
   };
 
-  // Helper function to format date without timezone issues
   const formatDateForAPI = (date: Date): string => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -174,10 +167,9 @@ const EventsListEmbedded = forwardRef<EventsListRef>((_props, ref) => {
     return `${year}-${month}-${day}`;
   };
 
-  // Helper function to parse date string without timezone issues
   const parseDateString = (dateStr: string): Date => {
     const [year, month, day] = dateStr.split('-').map(Number);
-    return new Date(year, month - 1, day); // month is 0-indexed
+    return new Date(year, month - 1, day);
   };
 
   const handleSaveEdit = async () => {
@@ -326,7 +318,6 @@ const EventsListEmbedded = forwardRef<EventsListRef>((_props, ref) => {
             <Card key={event.id} className={`${getEventTypeColor(event.type)} transition-all hover:shadow-md`}>
               <CardContent className="p-4 sm:p-6">
                 {editingId === event.id ? (
-                  // Edit Mode
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="sm:col-span-2">
@@ -410,7 +401,6 @@ const EventsListEmbedded = forwardRef<EventsListRef>((_props, ref) => {
                     </div>
                   </div>
                 ) : (
-                  // View Mode
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                     <div className="flex-1">
                       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2">

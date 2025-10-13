@@ -68,7 +68,6 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ onSuccess, onClose })
     setShowEditForm(true);
     setTitleOpen(false);
     
-    // Pre-fill form with data from the first event with this title
     const existingEvent = events.find(event => event.title === title);
     if (existingEvent) {
       setValue('time', existingEvent.time || '');
@@ -87,13 +86,12 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ onSuccess, onClose })
 
   const onSubmit = async (data: FormData) => {
     if (!hasChanges) {
-      return; // Don't submit if nothing changed
+      return;
     }
 
     setIsSubmitting(true);
     
     try {
-      // Prepare updates object with only filled fields
       const updates: any = {};
       if (data.time) updates.time = data.time;
       if (data.location) updates.location = data.location;
@@ -113,10 +111,8 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ onSuccess, onClose })
         setResponse(result);
         setStatus('success');
         
-        // Call success callback and close dialog after a short delay
         if (onSuccess) onSuccess();
         
-        // Auto close dialog after success
         setTimeout(() => {
           if (onClose) onClose();
         }, 1500);
@@ -133,7 +129,6 @@ const EditEventDialog: React.FC<EditEventDialogProps> = ({ onSuccess, onClose })
     }
   };
 
-  // Get unique titles
   const uniqueTitles = [...new Set(events.map(event => event.title))];
 
   return (
