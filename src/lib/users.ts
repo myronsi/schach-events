@@ -1,11 +1,15 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 export type HardcodedUser = {
   username: string;
   password: string;
 };
 
-export const USERS: HardcodedUser[] = [
-  { username: '', password: '' }
-];
+const USERS: HardcodedUser[] = process.env.USERS
+  ? JSON.parse(process.env.USERS)
+  : [];
 
 export function validateCredentials(username: string, password: string): boolean {
   return USERS.some(u => u.username === username && u.password === password);
